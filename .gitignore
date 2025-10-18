@@ -1,0 +1,8 @@
+# --- Virtual Environments ---
+venv/
+.env/
+.env.bak/
+
+# --- Data folders ---
+data/
+datasets/
