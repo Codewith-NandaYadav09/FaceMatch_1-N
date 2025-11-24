@@ -6,3 +6,5 @@ venv/
 # --- Data folders ---
 data/
 datasets/
+
+.cache/

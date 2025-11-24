@@ -1,19 +1,31 @@
-import faiss, numpy as np
-d = embeddings.shape[1]  # e.g., 512
-index = faiss.IndexHNSWFlat(d, M)   # M recommended 16-64
-index.hnsw.efConstruction = efC
-faiss.normalize_L2(embeddings)
-index.add(embeddings)               # adds N vectors
-# Save index
-faiss.write_index(index, "results/hnsw.index")
+import os
+import numpy as np
+import faiss
 
-
-# from qdrant_client import QdrantClient
-# from qdrant_client.http.models import VectorParams, HnswConfig
-# client = QdrantClient(host="localhost", port=6333)
-# client.recreate_collection(
-#     collection_name='faces',
-#     vectors_config=VectorParams(size=d, distance="Cosine"),
-#     hnsw_config=HnswConfig(m=32, ef_construct=200)
-# )
-# # upsert vectors in batches
+def build_faiss_index(results_dir, metric='cosine', M=16, ef=200):
+    """Build FAISS HNSW index."""
+    
+    embeddings_path = os.path.join(results_dir, "embeddings.npy")
+    index_path = os.path.join(results_dir, "hnsw.index")
+    
+    if not os.path.exists(embeddings_path):
+        print(f"❌ Embeddings not found at {embeddings_path}")
+        return
+    
+    print(f"Loading embeddings...")
+    embeddings = np.load(embeddings_path)
+    print(f"✓ Loaded {embeddings.shape[0]} embeddings of dim {embeddings.shape[1]}")
+    
+    # Ensure C-contiguous
+    embeddings = np.ascontiguousarray(embeddings, dtype=np.float32)
+    
+    # Build HNSW index
+    dim = embeddings.shape[1]
+    index = faiss.IndexHNSWFlat(dim, M)
+    index.hnsw.efConstruction = ef
+    index.add(embeddings)
+    
+    # Save
+    faiss.write_index(index, index_path)
+    print(f"✓ Index saved to {index_path}")
+    print(f"  Dimension: {dim}, Vectors: {index.ntotal}, M={M}, ef={ef}")

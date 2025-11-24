@@ -17,7 +17,7 @@
 
 ## Part A — Faiss benchmark (auto-load real embeddings if available)
 
-```python
+# ```python
 # Faiss_End-to-End_Benchmark_Notebook.py
 # Requirements: pip install faiss-cpu numpy pandas psutil tqdm scikit-learn
 
@@ -234,9 +234,9 @@ def main():
 
 if __name__ == '__main__':
     main()
-```
+# ```
 
----
+# ---
 
 ## Part B — Qdrant ingestion & in-memory benchmark
 
@@ -294,7 +294,7 @@ for i in range(NUM_Q):
     times.append((t1-t0)*1000)
 
 print("Qdrant query ms: p50=%.2f p95=%.2f p99=%.2f mean=%.2f" % (np.percentile(times,50), np.percentile(times,95), np.percentile(times,99), np.mean(times)))
-```
+# ```
 
 # Notes:
 # - For Qdrant over HTTP, measure serialization overhead; for production co-locate Qdrant to reduce network latency.
