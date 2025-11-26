@@ -1,0 +1,103 @@
+I'll start by creating a concise TODO plan to guide building the project scaffold and core components.
+
+Created 8 todos
+
+Progress: I created a high-level TODO plan and marked scaffolding as in-progress.
+
+Proposed Directory Structure
+
+face-match-1n/ : project root
+README.md : short overview, quick start, architecture summary.
+.gitignore : Python/Node artifacts, dataset, model weights
+requirements.txt or pyproject.toml : Python dependencies
+LICENSE
+docs/ : longer docs, design decisions, diagrams
+data/
+raw/ : raw images (not committed)
+processed/ : aligned crops, thumbnails
+examples/ : small sample dataset for demos
+embeddings/
+__init__.py
+models.py : model selection and wrapper (FaceNet/ArcFace/dlib or API)
+preprocess.py : face detection, alignment, normalization
+encoder.py : compute, batch, and serialize embeddings
+tests/ : unit tests for embedding pipeline
+vector_db/
+__init__.py
+faiss_adapter.py : local FAISS index management
+milvus_adapter.py : optional Milvus connector
+pinecone_adapter.py : optional Pinecone connector
+schema.py : metadata schema and helpers
+utils.py : common helpers (upsert, delete, search)
+api/
+main.py : FastAPI app
+routes/
+ingest.py : endpoints for adding images
+search.py : search by image/upload or embedding
+health.py
+schemas.py : Pydantic models for requests/responses
+workers.py : background tasks (bulk indexing)
+config.py : app configuration and secrets handling
+tools/
+prepare_dataset.py : create aligned crops & metadata
+index_dataset.py : bulk index script
+benchmark.py : evaluate retrieval metrics
+cli.py : convenience CLI wrapper (click or typer)
+web/ (optional)
+package.json
+src/ : React app to upload images and display results
+notebooks/ : exploratory notebooks (embedding viz, t-SNE)
+tests/ : integration tests (end-to-end search)
+ci/ or .github/workflows/ : CI pipelines
+examples/ : small runnable demos and scripts
+logs/ : runtime logs (added to .gitignore)
+models/ : optional model weights (ignored or downloaded at runtime)
+Key file details (what to put where)
+
+embeddings/preprocess.py:
+face detection (MTCNN / dlib / RetinaFace), crop & align faces
+image normalization, size resizing (e.g., 112×112 or 160×160)
+embeddings/models.py:
+wrapper class EmbeddingModel(backend, device) with encode(batch_images) returning L2-normalized vectors
+support pluggable backends: PyTorch model, ONNX, or remote API (Replicate, cloud)
+vector_db/faiss_adapter.py:
+build index (IndexFlatIP / IndexIVFFlat) with metadata mapping (id -> filename, person_id)
+functions: create_index, upsert(embeddings, metadata), search(query_embedding, k)
+api/main.py:
+small FastAPI app with endpoints:
+POST /ingest accepts image(s), returns assigned ids
+POST /search accepts image or embedding, returns top-k matches and distances
+GET /status health
+tools/index_dataset.py:
+pipeline: preprocess -> encode -> upsert to vector DB -> store metadata (SQLite / JSONL)
+docs/:
+architecture.md (embedding flow, index choices)
+quickstart.md (how to run local FAISS demo)
+tuning.md (index parameters, accuracy vs latency)
+README.md should show:
+supported Python version
+quick install (venv + pip)
+running local demo with FAISS
+how to switch adapters (env vars)
+Suggested Tech Stack (flexible)
+
+Language: Python 3.9+
+Backend: FastAPI
+Embeddings: PyTorch / ONNX models (FaceNet, InsightFace), or face_recognition for prototyping
+Vector DB: FAISS for local dev; Milvus/Weaviate/Pinecone for production
+Storage: Metadata in SQLite / PostgreSQL; images on disk or S3
+Frontend: React (Vite) for demo UI
+CLI: Typer or Click
+Tests: pytest
+CI: GitHub Actions
+Containerization: Dockerfile and docker-compose for local FAISS + API + optional UI
+Example quick-start commands (PowerShell)
+
+create venv and install:
+run API locally:
+run dataset indexing (example):
+Next steps / Options
+
+I can scaffold this directory and create initial files (README.md, requirements.txt, api/main.py, embeddings/__init__.py, vector_db/faiss_adapter.py, sample tools/ scripts) now — do you want me to generate these files and a minimal working demo (FAISS + FastAPI) in the workspace?
+Or I can instead produce more detailed content: a sample requirements.txt, exact FastAPI endpoints, or an embeddings wrapper example.
+Which would you like next?
