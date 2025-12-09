@@ -9,6 +9,9 @@ class IngestResponse(BaseModel):
 class SearchResultItem(BaseModel):
     id: str
     score: float
+    filename: Optional[str] = None
+    image_url: Optional[str] = None
+    file_path: Optional[str] = None
     metadata: Optional[Dict] = None
 
 

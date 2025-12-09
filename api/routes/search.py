@@ -19,5 +19,17 @@ async def search_by_image(file: UploadFile = File(...), k: int = 5):
         raise HTTPException(status_code=400, detail="No face detected")
     emb = embedder.encode([face])[0]
     ids, distances, metas = faiss.search(emb, k=k)
-    results = [SearchResultItem(id=i, score=float(d), metadata=m) for i, d, m in zip(ids, distances, metas)]
+    results = []
+    for i, d, m in zip(ids, distances, metas):
+        # Skip None results
+        if i is None:
+            continue
+        # Extract filename from metadata or construct from id
+        filename = m.get("filename") if m else None
+        if not filename:
+            filename = f"{i}.jpg"
+        # Build image URL for the frontend (API image endpoint) and include local file_path if available
+        image_url = f"/api/image/{filename}" if filename else None
+        file_path = m.get("file_path") if m else None
+        results.append(SearchResultItem(id=str(i), score=float(d), filename=filename, image_url=image_url, file_path=file_path, metadata=m))
     return SearchResponse(query_id=None, results=results)

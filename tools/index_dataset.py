@@ -32,7 +32,8 @@ def index_folder(folder: str, index_path: str):
         emb = embedder.encode([face])[0]
         ids.append(fn)
         embs.append(emb)
-        metas.append({"filename": fn})
+        # store filename and absolute file path in metadata for later retrieval
+        metas.append({"filename": fn, "file_path": os.path.abspath(p)})
     if ids:
         import numpy as np
         faiss.upsert(ids, np.stack(embs).astype('float32'), metas)
